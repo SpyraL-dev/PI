@@ -1,71 +1,115 @@
 const { Router } = require('express');
 // Importar todos los routers;
 // Ejemplo: const authRouter = require('./auth.js');
-const { Dog, Temperament } = require('../db');
+const { Dog } = require('../db');
 const router = Router();
 const axios = require("axios")
 
 // Configurar los routers
 // Ejemplo: router.use('/auth', authRouter);
 
-router.get("/" , (req, res)=>{
-    var apiDogs = axios.get("https://api.thedogapi.com/v1/breeds")
-    var dbDogs =  Dog.findAll({
+router.get("/" , async (req, res)=>{
+    let dbDogs = await Dog.findAll()
+    let dbDogsParse = []    
+    for (let i = 0; i < dbDogs.length; i++) {
+        let founddog = dbDogs[i];
+        founddog = founddog.dataValues;
+        dbDogsParse.push(founddog)
+    }
+    axios.get("https://api.thedogapi.com/v1/breeds") 
+    .then(respuesta => {  
+        dbDogsParse= [...dbDogsParse, ...respuesta.data]
+        res.send(dbDogsParse)
     })
-    return Promise.all([
-        apiDogs,
-        dbDogs
-    ])
-    .then(resultados =>{
-       los2= resultados[0].concat(resultados[1])
-        res.send(los2)
-    })
-})
-router.get("/raza?:name" , (req, res)=>{
-    const {name}= req.params
-    const sname = name
-    var apiDogs = axios.get("https://api.thedogapi.com/v1/breeds")
-    var dbDogs =  Dog.findAll({
-    })
-    return Promise.all([
-        apiDogs,
-        dbDogs
-    ])
-    .then(resultados =>{
-      var los2= resultados[0].concat(resultados[1])
-      var filtrado = los2.findAll({where:{name: sname}})
-      if(filtrado.length() !== 0)return res.send(los2)
-      else return res.send("Error raza de perro no encontrada")
+    .catch(error => {
+        console.log(error)
     })
 })
-router.get("/:id", (req, res)=>{
-    const {id} = req.params
-    var sid= id
-    var apiDogs = axios.get("https://api.thedogapi.com/v1/breeds").findAll({ where:{id: sid}})
-    var dbDogs = Dog.findAll({ where:{id: sid}})
-    if(apiDogs.length()>0){
-        return res.json(apiDogs)
-    };
-    if(dbDogs.length() >0){
-        return res.json(dbDogs)
-    };
-    return res.send("Error Id de Dog no encontrada")
+router.get("/CreatedDogs" , async (req, res)=>{
+    let dbDogs = await Dog.findAll()
+    let dbDogsParse = []    
+    for (let i = 0; i < dbDogs.length; i++) {
+        let founddog = dbDogs[i];
+        let temperaments = await founddog.getTemperaments() 
+        founddog = founddog.dataValues;
+        temperaments = temperaments.map((el) => el.dataValues.name)
+        founddog.temperament = temperaments.toString()
+        dbDogsParse.push(founddog)
+    }
+    res.send(dbDogsParse)
+})
+router.get("/search" , async (req, res)=>{
+    let dbDogs = await Dog.findAll()
+    let dbDogsParse = []    
+    for (let i = 0; i < dbDogs.length; i++) {
+        let founddog = dbDogs[i];
+        let temperaments = await founddog.getTemperaments() 
+        founddog = founddog.dataValues;
+        temperaments = temperaments.map((el) => el.dataValues.name)
+        founddog.temperament = temperaments.toString()
+        dbDogsParse.push(founddog)
+    }
+    axios.get(`https://api.thedogapi.com/v1/breeds`)
+        .then(respuesta => {
+            let resultado = [...dbDogsParse, ...respuesta.data].filter((el) => 
+                el.name.toLowerCase().includes(req.query.name.toLowerCase()))
+            if (resultado.length === 0) {
+                res.send([])
+            }
+            if(resultado.length > 0 && resultado.length < 20) {
+                res.send(resultado)
+            }
+            else if(resultado.length > 8) {
+                let nuevoarray = resultado.slice(0, 20)
+                res.send(nuevoarray)
+            } 
+            res.end()
+        })        
+        .catch(error => {
+            console.log(error)
+
+        })
 })
 
 
+router.get("/:id", async (req, res)=>{
+    let dogdetails = []
+  if(req.params.id.length>4) { 
+    try{
+    let searchdetails = await Dog.findByPk(req.params.id)
+    let temperaments = await searchdetails.getTemperaments() 
+    let found = searchdetails.dataValues;
+    temperaments = temperaments.map((el) => el.dataValues.name)
+    found.temperament = temperaments.toString()
+    dogdetails.push(found)
+    } catch(error) {
+            console.log(error)
+        }}
+    axios.get(`https://api.thedogapi.com/v1/breeds`)
+        .then (respuesta => {
+            const perro = [...dogdetails, ...respuesta.data].find(element => element.id == req.params.id);
+            res.send(perro)
+        })
+        .catch(error => {
+            console.log(error)
+        }) 
+    })
 
-router.post("/Dog" , (req, res)=>{
+
+
+
+router.post("/NewDog" , (req, res)=>{
     const {name, height, weight, temperaments} = req.body;
     Dog.create({
         name,
         height,
         weight,
+        temperaments,
     })
     .then(doneTemp=>{
-        doneTemp.setTemperaments(temperaments)
-        res.json(doneTemp)
+        res.status(200).json(doneTemp)
     })
-    .catch(err=>{ res.send("error")})
+    .catch(error=>{ res.send("error")})
 })
 
 module.exports = router;

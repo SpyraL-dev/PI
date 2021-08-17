@@ -5,7 +5,7 @@ module.exports = (sequelize) => {
   // defino el modelo
  return sequelize.define('Temperament', {
     name: {
-      type: DataTypes.STRING,
+      type: DataTypes.JSON,
       allowNull: false,
     },
     ID:{

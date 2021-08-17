@@ -14,12 +14,16 @@ module.exports = (sequelize) => {
       primaryKey: true
     },
     height:{
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     weight:{
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false,
     },
-  });
+    temperaments:{
+      type: DataTypes.JSON,
+      allowNull: false,
+    },
+   });
 };
