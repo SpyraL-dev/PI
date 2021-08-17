@@ -3,7 +3,7 @@ import "./DogCard.css"
 
 function DogCard({name, temperament, id, img, temperaments}) {
  if(temperaments) {
-    const solucion= temperaments.map(el=>el.name)
+    const solucion= [...temperaments]
     temperament= solucion
      }
   return (

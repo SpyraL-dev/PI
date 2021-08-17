@@ -28,7 +28,7 @@ function AgregarPerro() {
   }
 
   const AgregarNuevoPerro = () => {
-    let temperaments = [...temperamentoUltimo]
+    let temperaments = [...temperamentoUltimo.map(el=>el.name)]
     if(NewDog.name.length<1)throw alert("EL nombre no puede estar en blanco");
     if(NewDog.height.length<1)throw alert("La altura no puede estar en blanco");
     if(NewDog.weight.length<1)throw alert("EL peso no puede estar blanco");
