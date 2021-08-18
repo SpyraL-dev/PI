@@ -89,9 +89,9 @@ function Home() {
             <div>
                 <div>
                     <SearchBar />   
-                <div>
+                {/* <div>
                     <Link to= "/NewDog"><button className="boton-agregar-perro">New Dog</button></Link>
-                </div>      
+                </div>       */}
                 </div>
                 <div className="container-todos-select"> 
                     <div className= "select-container">

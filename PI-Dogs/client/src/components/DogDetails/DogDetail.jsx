@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom"
 import {useState, useEffect} from "react"
+import foto from "../imgs/Newdog.png"
 import axios from "axios"
 import "./DogDetail.css"
 
@@ -25,7 +26,7 @@ function DogDetail() {
             }else{
                 setDogDetail({
                     name: res.data.name,
-                    temperament:Array.from(res.data.temperaments.map(el=> el.name)),
+                    temperament:res.data.temperaments,
                     height: res.data.height + " cm",
                     weight: res.data.weight + " Kg",
                     fotoid: res.data.image?.url

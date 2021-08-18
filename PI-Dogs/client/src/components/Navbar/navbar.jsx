@@ -12,7 +12,8 @@ function Nav() {
   <a href="/home">
   <img id="logo" src={Logo} width="20" height="20" className="" alt="" />
   </a>
-  <a href="/about">About</a>
+  {/* <a href="/about">About</a> */}
+  <a href="/NewDog">New Dog</a>
 </div>
   );
 };
