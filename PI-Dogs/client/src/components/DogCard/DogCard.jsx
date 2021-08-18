@@ -8,7 +8,7 @@ function DogCard({name, temperament, id, img, temperaments}) {
      }
   return (
     <Link to={`/dog-detail/${id}`}>
-      <div className="card-container">
+      <div key={id} className="card-container">
           <img className= "img-dog" src= {img} alt=""></img>
           <div className="titulo-dog-container">
             <p className="titulo-card">{name}</p>

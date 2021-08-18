@@ -133,6 +133,7 @@ function Home() {
                     .slice(indexDelPrimerItem, indexDelUltimoItem)
                     .map((dog) => (
                         <DogCard 
+                            key={dog.id}
                             img= {dog.image?.url} 
                             name={dog.name} 
                             temperament={dog.temperament}
@@ -145,6 +146,7 @@ function Home() {
                     .slice(indexDelPrimerItem, indexDelUltimoItem)
                     .map((dog) => (
                         <DogCard 
+                            key={dog.id}
                             img= {dog.image?.url} 
                             name={dog.name} 
                             temperament={dog.temperament} 
@@ -156,6 +158,7 @@ function Home() {
                     .slice(indexDelPrimerItem, indexDelUltimoItem)                    
                     .map((dog) => (
                         <DogCard 
+                            key={dog.id}
                             img= {dog.image?.url} 
                             name={dog.name} 
                             temperament={dog.temperament}
